@@ -52,6 +52,24 @@ app.get('/pokemons', async (req, res) => {
     }
 });
 
+// GET Pokémon par recherche de nom (français uniquement)
+app.get('/pokemons/search', async (req, res) => {
+    try {
+        const query = req.query.q || '';
+        if (!query.trim()) {
+            return res.json([]);
+        }
+
+        const pokemons = await pokemon.find({
+            'name.french': { $regex: query, $options: 'i' }
+        });
+
+        res.json(pokemons);
+    } catch (error) {
+        res.status(500).json({ error: 'Erreur serveur' });
+    }
+});
+
 // GET Pokémon par ID
 app.get('/pokemons/:id', async (req, res) => {
     try {
